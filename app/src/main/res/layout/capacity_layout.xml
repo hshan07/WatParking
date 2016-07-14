@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="40dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="subscribe_N"
+            android:id="@+id/button2"
+
+            android:layout_row="1"
+            android:layout_column="2" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/mChart3"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_column="0"
+            android:layout_row="2"
+            android:layout_alignTop="@+id/mChart4"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_alignStart="@+id/textView1"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/mChart"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:layout_above="@+id/mChart3"
+            android:layout_alignLeft="@+id/mChart3"
+            android:layout_alignStart="@+id/mChart3" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/mChart2"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_column="2"
+            android:layout_row="0"
+            android:layout_below="@+id/textView1"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="subscribe_C"
+            android:id="@+id/button"
+            android:layout_row="1"
+
+            android:layout_column="0" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/mChart4"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_column="2"
+            android:layout_row="2"
+            android:layout_below="@+id/mChart2"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="subscribe_W"
+            android:id="@+id/button3"
+            android:layout_column="0"
+            android:layout_row="3"
+            android:layout_above="@+id/refresh"
+             />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="subscribe_X"
+            android:id="@+id/button4"
+            android:layout_column="2"
+            android:layout_row="3"
+            android:layout_above="@+id/refresh" />
+
+    </GridLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="refresh"
+        android:id="@+id/refresh"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
