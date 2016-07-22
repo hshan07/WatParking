@@ -92,7 +92,7 @@ public class MapViewFragment extends Fragment {
                         new InputStreamReader(getActivity().getAssets().open("building.json")));
                 data_String = reader.readLine();
                 System.out.println(data_String);
-                System.out.print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+               // System.out.print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -117,7 +117,7 @@ public class MapViewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
                 view.setSelected(true);
-                System.out.println("row selected: " + position );
+               //System.out.println("row selected: " + position );
                 Intent intent = new Intent(getActivity(), MapsActivity.class);
                 intent.putExtra("Myclass",search_result.get(position).toString());
                 startActivity(intent);

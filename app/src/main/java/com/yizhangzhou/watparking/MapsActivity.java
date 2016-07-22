@@ -1,18 +1,10 @@
 package com.yizhangzhou.watparking;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.support.v4.app.FragmentActivity;
 
-import com.google.android.gms.fitness.result.SyncInfoResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,17 +44,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             if (getIntent().getStringExtra("Myclass") != null) {
                 JSONObject jsonObj = new JSONObject(getIntent().getStringExtra("Myclass"));
-                System.out.println(jsonObj.getString("building_code"));
-                System.out.println("Here is another activity;;;;;;;;;;;;;;;;;");
+               // System.out.println(jsonObj.getString("building_code"));
+               // System.out.println("Here is another activity;;;;;;;;;;;;;;;;;");
 
 
-                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr=" + 43.472761 + "," + -80.542164 + "&daddr=" + jsonObj.getString("latitude") + "," + jsonObj.getString("longitude")));
+                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr=" + 43.47031155 + "," + -80.54084139 + "&daddr=" + jsonObj.getString("latitude") + "," + jsonObj.getString("longitude")));
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);
-//            } else if (getIntent().getStringExtra("Mycar") != null) {
-//                System.out.println(getIntent().getStringExtra("Mycar"));
+            } else if (getIntent().getStringExtra("Mycar") != null) {
+                System.out.println(getIntent().getStringExtra("Mycar"));
 
-//
+
 //               GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
 //                    @Override
 //                    public void onMyLocationChange(Location location) {
@@ -74,17 +66,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                        }
 //                    }
 //                };
-
-                //  mMap.setOnMyLocationChangeListener(myLocationChangeListener);
-
-//                GPSTracker gps=new GPSTracker(this);
-//                LatLng Current = new LatLng(gps.getLatitude(), gps.getLongitude());
 //
-//                mMap.addMarker(new MarkerOptions().position(Current).title("Current Location"));
-//                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Current, 16));
-//            }
+//                  mMap.setOnMyLocationChangeListener(myLocationChangeListener);
+//
+//                GPSTracker gps=new GPSTracker(this);
+            LatLng Current = new LatLng(43.47031155, -80.54084139);
+
+                mMap.addMarker(new MarkerOptions().position(new LatLng(43.47031155,-80.54084139 )).title("Current Location"));
+                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Current, 16));
+                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr=" + 43.47031155 + "," + -80.54084139 + "&daddr=" + 43.467536 + "," + -80.538379));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
             }
+
         }catch( Exception e){
             e.printStackTrace();
         }

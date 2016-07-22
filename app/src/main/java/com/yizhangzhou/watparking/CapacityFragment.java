@@ -1,12 +1,9 @@
 package com.yizhangzhou.watparking;
 
 
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +15,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +22,9 @@ import java.util.List;
 
 public class CapacityFragment extends Fragment {
 
-    public class ParkingLot{
-        public String lot_name;
-        public double latitude;
-        public double longitude;
-        public int capacity;
-        public int current_count;
-        public int percent_filled;
-        public String last_updated;
-    }
-    String line;
 
-    List<ParkingLot> parkingLots = new ArrayList<ParkingLot>();
     List<PieChart> pieCharts = new ArrayList<PieChart>();
-    List<Integer> tests = new ArrayList<Integer>();
+
     Boolean first=true;
     View major;
 
@@ -54,27 +33,25 @@ public class CapacityFragment extends Fragment {
     private Button button2;
     private Button button3;
     private Button button4;
-    private int flag=0;
-    private int flag2=0;
-    private int flag3=0;
-    private int flag4=0;
+
+
+
+    LocalAdapter localAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        //View view = inflater.inflate(R.layout.capacity_layout, container,false);
-        //TextView textView = (TextView) view.findViewById(R.id.textView);
-        //textView.setText("123");
 
         if(first==true) {
             View rootView = inflater.inflate(R.layout.capacity_layout, container, false);
-            new GetData().execute();
+
+            localAdapter = ((LocalAdapter) this.getActivity().getApplicationContext());
+            localAdapter.new GetData().execute();
+            localAdapter.CapcityInit(this);
 
             View view = inflater.inflate(R.layout.capacity_layout, container, false);
 
-            //pieCharts.clear();
-            //parkingLots.clear();
-            //if (pieCharts.size() == 0) {
             mChart = (PieChart) view.findViewById(R.id.mChart);
             pieCharts.add(mChart);
             mChart = (PieChart) view.findViewById(R.id.mChart2);
@@ -84,72 +61,104 @@ public class CapacityFragment extends Fragment {
             mChart = (PieChart) view.findViewById(R.id.mChart4);
             pieCharts.add(mChart);
 
+
             button = (Button) view.findViewById(R.id.button);
-            button.setOnClickListener(new View.OnClickListener() {
+            if(localAdapter.readInt("C") == 1) {
+                button.setText("Subscribed");
+            }
+
+                button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(flag == 0) {
+                    if(localAdapter.readInt("C") == 0) {
                         button.setText("Subscribed");
-                        new GetData().execute();
-                        flag=1;
+                        String[] params = {"C", "sub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("C",1);
                     }else{
                         button.setText("subscribe_C");
-                        flag=0;
+                        String[] params = {"C", "unsub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("C",0);
                     }
                 }
             });
             button2 = (Button) view.findViewById(R.id.button2);
+            if(localAdapter.readInt("N") == 1) {
+                button2.setText("Subscribed");
+            }
             button2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(flag2 == 0) {
+                    if(localAdapter.readInt("N") == 0) {
                         button2.setText("Subscribed");
-                        new GetData().execute();
-                        flag2=1;
+                        String[] params = {"N", "sub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("N",1);
+
                     }else{
                         button2.setText("subscribe_N");
-                        flag2=0;
+                        String[] params = {"N", "unsub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("N",0);
                     }
                 }
             });
+
             button3 = (Button) view.findViewById(R.id.button3);
+            if(localAdapter.readInt("W") == 1) {
+                button3.setText("Subscribed");
+            }
             button3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(flag3 == 0) {
+                    if(localAdapter.readInt("W") == 0) {
                         button3.setText("Subscribed");
-                        new GetData().execute();
-                        flag3=1;
+                        String[] params = {"W", "sub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("W",1);
                     }else{
                         button3.setText("subscribe_W");
-                        flag3=0;
+                        String[] params = {"W", "unsub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("W",0);
+
                     }
                 }
             });
             button4 = (Button) view.findViewById(R.id.button4);
+            if(localAdapter.readInt("X") == 1) {
+                button4.setText("Subscribed");
+            }
             button4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(flag4 == 0) {
+                    if(localAdapter.readInt("X") == 0) {
                         button4.setText("Subscribed");
-                        new GetData().execute();
-                        flag4=1;
+                        String[] params = {"X", "sub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("X",1);
                     }else{
                         button4.setText("subscribe_X");
-                        flag4=0;
+                        String[] params = {"X", "unsub"};
+                        localAdapter.new Subscribe().execute(params);
+                        localAdapter.save("X",0);
+
                     }
                 }
             });
 
+            localAdapter.setUp();
 
-            //}
+
 
             Button refresh = (Button) view.findViewById(R.id.refresh);
 
             refresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new GetData().execute();
+                    localAdapter.new GetData().execute();
+                    ;
                 }
             });
             first=false;
@@ -165,83 +174,16 @@ public class CapacityFragment extends Fragment {
 
 
 
-    private class GetData extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... urls){
-            try {
-                URL url = new URL("https://api.uwaterloo.ca/v2/parking/watpark.json?key=e0b4a8543ba4a9a371f2bece0edfc351");
-
-                // read text returned by server
-                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-                line = in.readLine();
-                in.close();
-            } catch(Exception e) {
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Error Message");
-                alertDialog.setMessage("Please check the network connection");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-                getActivity().finish();
-                System.exit(0);
-
-            }
-
-
-            return null;
-        }
-
-
-        protected void onPostExecute(Void unused) {
-            //System.out.println(line);
-            //System.out.println("ON POST EXECUTE");
-            try {
-                JSONObject jObjs = new JSONObject(line);
-                //jObjs.getJSONObject("meta").getJSONObject("status") == 200;
-                JSONArray jArray = jObjs.getJSONArray("data");
-
-                parkingLots.clear();
-                for(int i = 0; i < jArray.length();i++){
-                    JSONObject jsObj = jArray.getJSONObject(i);
-                    ParkingLot parkingLot = new ParkingLot();
-                    parkingLot.lot_name = jsObj.getString("lot_name");
-                    parkingLot.latitude = jsObj.getDouble("latitude");
-                    parkingLot.longitude = jsObj.getDouble("longitude");
-                    parkingLot.capacity = jsObj.getInt("capacity");
-                    parkingLot.current_count = jsObj.getInt("current_count");
-                    parkingLot.percent_filled = jsObj.getInt("percent_filled");
-                    parkingLot.last_updated = jsObj.getString("last_updated");
-                    parkingLots.add(parkingLot);
-                }
-
-            }catch(JSONException e){
-                System.out.println("Error Message2");
-
-            }
-            //System.out.println("FINISH JSON");
-            draw();
-
-        }
-
-    }
-
     public void draw(){
-        //System.out.println("HERE");
         for(int i = 0; i < 4; i++){
-            //String lot_name = parkingLots.get(i).lot_name;
             PieData mPieData = getPieData(2, 100,i);
             mChart = pieCharts.get(i);
-            showChart(mChart, mPieData,parkingLots.get(i).lot_name, parkingLots.get(i).capacity-parkingLots.get(i).current_count);
+
+            String lot_name = ((LocalAdapter) this.getActivity().getApplication()).parkingLots.get(i).lot_name;
+            int capacity = ((LocalAdapter) this.getActivity().getApplication()).parkingLots.get(i).capacity;
+            int current_count = ((LocalAdapter) this.getActivity().getApplication()).parkingLots.get(i).current_count;
+
+            showChart(mChart, mPieData, lot_name, capacity);
         }
     }
 
@@ -258,8 +200,9 @@ public class CapacityFragment extends Fragment {
 
         pieChart.setRotationEnabled(true);
 
+        pieChart.setCenterText(s + "  " + i);
 
-        pieChart.setCenterText( s + "  " + i);
+        //pieChart.setDraw
 
         pieChart.setData(pieData);
 
@@ -270,19 +213,21 @@ public class CapacityFragment extends Fragment {
 
 
     private PieData getPieData(int count, float range, int i) {
-        //System.out.println("HERE2");
         ArrayList<String> xValues = new ArrayList<String>();
 
-        xValues.add("current_count: ");
+        xValues.add("current");
 
-        xValues.add("available: " );
+        xValues.add("available" );
+
+
+        //xValues.add
 
         ArrayList<Entry> yValues = new ArrayList<Entry>();
 
 
+        float capacity = ((LocalAdapter) this.getActivity().getApplication()).parkingLots.get(i).capacity;
+        float current_count = ((LocalAdapter) this.getActivity().getApplication()).parkingLots.get(i).current_count;
 
-        float capacity = parkingLots.get(i).capacity;
-        float current_count = parkingLots.get(i).current_count;
         yValues.add(new Entry(current_count, 0));
         yValues.add(new Entry(capacity - current_count, 1));
 
@@ -302,6 +247,7 @@ public class CapacityFragment extends Fragment {
         pieDataSet.setSelectionShift(px);
 
         PieData pieData = new PieData(xValues, pieDataSet);
+        pieData.setValueTextSize(10f);
         return pieData;
     }
 

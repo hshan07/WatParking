@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -16,6 +17,10 @@ public class GCMPushReceiverService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
+//
+//        final LocalAdapter localAdapter = ((LocalAdapter) this.getActivity().getApplication());
+//        localAdapter.new GetData().execute();
+
         sendNotification(message);
     }
     private void sendNotification(String message) {
@@ -33,6 +38,8 @@ public class GCMPushReceiverService extends GcmListenerService {
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
+        noBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, noBuilder.build()); //0 = ID of notification

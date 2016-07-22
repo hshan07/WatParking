@@ -34,11 +34,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     ViewPager viewpager;
     FragmentPageAdapter ft;
     BroadcastReceiver mRegistrationBroadcastReceiver;
+    LocalAdapter localAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        localAdapter = ((LocalAdapter) getApplicationContext());
 
 
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
@@ -48,10 +53,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
                     //Registration success
                     String token = intent.getStringExtra("token");
-                    Toast.makeText(getApplicationContext(), "GCM token:" + token, Toast.LENGTH_LONG).show();
+
+                    localAdapter.token =token;
+                    localAdapter.save("Token",token);
+
+                    //Toast.makeText(getApplicationContext(), "GCM token:" + token, Toast.LENGTH_LONG).show();
+
+
                 } else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
                     //Registration error
-                    Toast.makeText(getApplicationContext(), "GCM registration error!!!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "GCM registration error!!!", Toast.LENGTH_LONG).show();
                 } else {
                     //Tobe define
                 }
@@ -63,33 +74,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         if(ConnectionResult.SUCCESS != resultCode) {
             //Check type of error
             if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                Toast.makeText(getApplicationContext(), "Google Play Service is not install/enabled in this device!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Google Play Service is not install/enabled in this device!", Toast.LENGTH_LONG).show();
                 //So notification
                 GooglePlayServicesUtil.showErrorNotification(resultCode, getApplicationContext());
             } else {
-                Toast.makeText(getApplicationContext(), "This device does not support for Google Play Service!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "This device does not support for Google Play Service!", Toast.LENGTH_LONG).show();
             }
         } else {
             //Start service
             Intent itent = new Intent(this, GCMRegistrationIntentService.class);
             startService(itent);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -153,6 +148,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         Log.w("MainActivity", "onPause");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
+
 
 
 

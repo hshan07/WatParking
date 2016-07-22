@@ -4,6 +4,7 @@ package com.yizhangzhou.watparking;
  * Created by Shiina on 2016/6/15.
  */
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,11 +18,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,18 +26,35 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class PredictionFragment extends Fragment {
     Boolean first=true;
     View major;
+
+    List<LineChart> lineCharts = new ArrayList<LineChart>();
+    String oneline;
+    String oneline2;
+    int flag=0;
+    LocalAdapter localAdapter;
+
     ArrayList<Entry> entries = new ArrayList<>();
     ArrayList<Entry> entries2 = new ArrayList<>();
     ArrayList<Entry> entries3 = new ArrayList<>();
-    ArrayList<Entry> entries4 = new ArrayList<>();
+    ArrayList<Entry> entries4 = new ArrayList<>();;
+
     ArrayList<String> labels = new ArrayList<String>();
 
-    String oneline;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,8 +64,16 @@ public class PredictionFragment extends Fragment {
         //TextView textView = (TextView) view.findViewById(R.id.textView);
         //textView.setText("123");
 
-        if(first==true) {
-            new TheTask().execute();
+        localAdapter = ((LocalAdapter) this.getActivity().getApplicationContext());
+        if(true) {
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("9999999");
+                    BeginDraw();
+                }
+            }, 30*1000);
 
             View rootView = inflater.inflate(R.layout.prediction_layout, container, false);
 
@@ -62,93 +83,25 @@ public class PredictionFragment extends Fragment {
             LineChart lineChart2 = (LineChart) view.findViewById(R.id.chart2);
             LineChart lineChart3 = (LineChart) view.findViewById(R.id.chart3);
             LineChart lineChart4 = (LineChart) view.findViewById(R.id.chart4);
-//            // creating list of entry
-//
-//
+            lineCharts.add(lineChart);
+            lineCharts.add(lineChart2);
+            lineCharts.add(lineChart3);
+            lineCharts.add(lineChart4);
+            lineChart.setDescription("N");
+            lineChart2.setDescription("W");
+            lineChart3.setDescription("X");
+            lineChart4.setDescription("C");
 
 
 
-            entries.add(new Entry(4f, 0));
-            entries.add(new Entry(6f, 1));
-            entries.add(new Entry(6f, 2));
-            entries.add(new Entry(2f, 3));
-            entries.add(new Entry(18f, 4));
-            entries.add(new Entry(9f, 5));
-            entries.add(new Entry(10f, 6));
+            Init_Table();
+            if(localAdapter.readString("current") == ""){
+                BeginDraw();
 
-            entries2.add(new Entry(10f, 0));
-            entries2.add(new Entry(7f, 1));
-            entries2.add(new Entry(4f, 2));
-            entries2.add(new Entry(3f, 3));
-            entries2.add(new Entry(5f, 4));
-            entries2.add(new Entry(0f, 5));
-            entries2.add(new Entry(9f, 6));
-
-            entries3.add(new Entry(1f, 0));
-            entries3.add(new Entry(2f, 1));
-            entries3.add(new Entry(3f, 2));
-            entries3.add(new Entry(4f, 3));
-            entries3.add(new Entry(5f, 4));
-            entries3.add(new Entry(6f, 5));
-            entries3.add(new Entry(7f, 6));
-
-            entries4.add(new Entry(6f, 0));
-            entries4.add(new Entry(6f, 1));
-            entries4.add(new Entry(6f, 2));
-            entries4.add(new Entry(6f, 3));
-            entries4.add(new Entry(6f, 4));
-            entries4.add(new Entry(6f, 5));
-            entries4.add(new Entry(6f, 6));
-
-            LineDataSet dataset = new LineDataSet(entries, "# of Calls");
-            LineDataSet dataset2 = new LineDataSet(entries2, "# of Calls");
-            LineDataSet dataset3 = new LineDataSet(entries3, "# of Calls");
-            LineDataSet dataset4 = new LineDataSet(entries4, "# of Calls");
-
-            labels.add("8:00");
-            labels.add("10:00");
-            labels.add("12:00");
-            labels.add("2:00");
-            labels.add("4:00");
-            labels.add("6:00");
-            labels.add("8:00");
-////
-
-
-            LineData data = new LineData(labels,dataset);
-            LineData data2 = new LineData(labels,dataset2);
-            LineData data3 = new LineData(labels,dataset3);
-            LineData data4 = new LineData(labels,dataset4);
-
-            dataset.setColors(ColorTemplate.COLORFUL_COLORS); //
-            dataset.setDrawCubic(true);
-            dataset.setDrawFilled(true);
-
-            dataset2.setColors(ColorTemplate.COLORFUL_COLORS); //
-            dataset2.setDrawCubic(true);
-            dataset2.setDrawFilled(true);
-
-            dataset3.setColors(ColorTemplate.COLORFUL_COLORS); //
-            dataset3.setDrawCubic(true);
-            dataset3.setDrawFilled(true);
-
-            dataset4.setColors(ColorTemplate.COLORFUL_COLORS); //
-            dataset4.setDrawCubic(true);
-            dataset4.setDrawFilled(true);
-
-
-            lineChart.setData(data);
-            lineChart2.setData(data2);
-            lineChart3.setData(data3);
-            lineChart4.setData(data4);
-
-            data.notifyDataChanged();
-            lineChart.animateY(5000);
-            lineChart2.animateY(5000);
-            lineChart3.animateY(5000);
-            lineChart4.animateY(5000);
-
-            first=false;
+            }
+            else{
+                Draw();
+            }
             major=view;
             return view;
         } else {
@@ -159,20 +112,40 @@ public class PredictionFragment extends Fragment {
 
     }
 
-    class TheTask extends AsyncTask<String,String,String>
+    public void BeginDraw(){
+        String InputString = localAdapter.readString("past");
+
+
+        if(InputString == ""|| InputString.length() < 10){
+
+            System.out.println("Not Exist!!!!");
+
+            String[] params = {"1469102400", "1469145600","past"};
+            new TheTask().execute(params);
+            //Draw(InputString, false);
+
+        }
+        else{
+            System.out.println("Great!!! Exist");
+            getCurrent();
+
+        }
+
+    }
+
+    public void getCurrent(){
+        String[] params = {"1469188800", "1469232000","current"};
+        new TheTask().execute(params);
+    }
+    class TheTask extends AsyncTask<String,Void,String>
     {
 
-
-        protected void onPostExecute(Void result) {
-            try {
-                JSONObject jObjs = new JSONObject(oneline);
-                //jObjs.getJSONObject("meta").getJSONObject("status") == 200;
-                JSONArray jArray = jObjs.getJSONArray("data");
-                System.out.println(jArray.getJSONObject(0).getString("date"));
-
-
-            }catch(JSONException e){
-                System.out.println("Error Message2");
+        protected void onPostExecute(String s) {
+            if(s == "past"){
+                getCurrent();
+            }
+            else if (s == "current"){
+                Draw();
 
             }
 
@@ -181,79 +154,249 @@ public class PredictionFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-            try {
 
+            try{
+                URL url = new URL("http://uwaterloo-server.com/parking?sdate=" + params[0] + "&edate=" + params[1]);
 
-                // read text returned by server
-//                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-//                String line = in.readLine();
-//                in.close();
-
-                HttpClient client = new DefaultHttpClient();
-                HttpPost parkingp= new HttpPost("http://uwaterloo-server.com/parking");
-                JSONObject object = new JSONObject();
-                try {
-                    object.accumulate("lot_name", "N");
-                    object.accumulate("date", "2016-07-06");
-
-                } catch (Exception ex) {
-
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                String line = in.readLine();
+                if(line.length() >= 10){
+                    localAdapter.save(params[2], line);
                 }
 
-                try {
-                    String message = object.toString();
-
-                    StringEntity se =new StringEntity(message);
-                    parkingp.setEntity(se);
-                }
-                catch(Exception e) {
-                    System.out.println("7-------------6");
-                    e.printStackTrace();
-
-                }
-
-                parkingp.setHeader("Accept", "application/json");
-                parkingp.setHeader("Content-type", "application/json");
-
-                System.out.println("6-------------6");
-                HttpResponse response = client.execute(parkingp);
-                InputStream inputStream = null;
-                System.out.println("8-------------7");
-                inputStream = response.getEntity().getContent();
-                System.out.println("9999999-------------6");
-                if(inputStream != null) {
-                    oneline = convertInputStreamToString(inputStream);
-                }
-                else
-                    oneline = "Did not work!";
-
+                in.close();
             }catch(Exception e) {
-                System.out.println("99-------------99");
                 e.printStackTrace();
+                return "ERROR";
 
 
             }
-            return "End";
-
-
+            return params[2];
         }
     }
+    public void Draw() {
 
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String result = "";
-        String line = "";
-        while ((line = bufferedReader.readLine()) != null) {
-            result += line;
+        String CurrentString = localAdapter.readString("current");
+        String PastString = localAdapter.readString("past");
+        JSONObject PastJson;
+        JSONObject CurrentJson;
+
+        ArrayList<Entry> entrie_N = new ArrayList<>();
+        ArrayList<Entry> entrie_W = new ArrayList<>();
+        ArrayList<Entry> entrie_X = new ArrayList<>();
+        ArrayList<Entry> entrie_C = new ArrayList<>();
+
+        try {
+
+            entries = new ArrayList<Entry>();
+            entries2 = new ArrayList<>();
+            entries3 = new ArrayList<>();
+            entries4 = new ArrayList<>();
+
+
+            JSONObject WholePastJson = new JSONObject(PastString);
+
+            JSONObject WholeCurrentJson = new JSONObject(CurrentString);
+            PastJson=WholePastJson.getJSONObject("data");
+            CurrentJson=WholeCurrentJson.getJSONObject("data");
+
+            int zeroCount = 0;
+            if(WholeCurrentJson.getInt("start_time") == 0 ){
+                zeroCount = 1440;
+            }
+            int Past_zeroCount = (1469107574 - 1469102400)/30;
+            JSONArray Current_N =CurrentJson.getJSONArray("N");
+
+            JSONArray Current_W=CurrentJson.getJSONArray("W");
+
+            JSONArray Current_X=CurrentJson.getJSONArray("X");
+
+            JSONArray Current_C=CurrentJson.getJSONArray("C");
+
+
+            JSONArray PastJson_N=PastJson.getJSONArray("N");
+
+            JSONArray PastJson_W=PastJson.getJSONArray("W");
+
+            JSONArray PastJson_X=PastJson.getJSONArray("X");
+
+            JSONArray PastJson_C=PastJson.getJSONArray("C");
+
+            int Midtotal = 0;
+            int endTotal = 0;
+
+            int Past_Midtotal = 0;
+            int Past_endTotal = 0;
+            int count=Current_N.length();
+            int Past_count=PastJson_N.length();
+            for(int i = 0; i<zeroCount; i++){
+                entries.add(new Entry(0, i));
+                entries2.add(new Entry(0,i));
+                entries3.add(new Entry(0,i));
+                entries4.add(new Entry(0,i));
+            }
+
+
+            if(zeroCount + count >  1440){
+                Midtotal = 1440 - zeroCount;
+                endTotal = 0;
+
+            }
+            else{
+
+                Midtotal = count;
+                endTotal = 1440 - zeroCount - count;
+            }
+
+
+            if(Past_zeroCount + Past_count >  1440){
+                Past_Midtotal = 1440 - Past_zeroCount;
+                Past_endTotal = 0;
+
+            }
+            else{
+
+                Past_Midtotal = Past_count;
+                Past_endTotal = 1440 - Past_zeroCount - Past_count;
+            }
+
+            for(int i= 0; i<Midtotal; i++){
+
+                entries.add(new Entry(Current_N.getInt(i), i + zeroCount));
+                entries2.add(new Entry(Current_W.getInt(i),i+zeroCount));
+                entries3.add(new Entry(Current_X.getInt(i),i+zeroCount));
+                entries4.add(new Entry(Current_C.getInt(i),i+zeroCount));
+            }
+            for(int i = 0; i<endTotal; i++){
+                entries.add(new Entry(0, i + zeroCount + Midtotal));
+                entries2.add(new Entry(0,i+zeroCount+Midtotal));
+                entries3.add(new Entry(0,i+zeroCount+Midtotal));
+                entries4.add(new Entry(0,i+zeroCount+Midtotal));
+            }
+//
+            for(int i= 0; i<Past_Midtotal; i++){
+
+                entrie_N.add(new Entry(PastJson_N.getInt(i), i + Past_zeroCount));
+                entrie_W.add(new Entry(PastJson_W.getInt(i), i + Past_zeroCount));
+                entrie_X.add(new Entry(PastJson_X.getInt(i), i + Past_zeroCount));
+                entrie_C.add(new Entry(PastJson_C.getInt(i), i + Past_zeroCount));
+            }
+            for(int i = 0; i<Past_endTotal; i++){
+                entrie_N.add(new Entry(0, i + Past_zeroCount + Past_Midtotal));
+                entrie_W.add(new Entry(0, i + Past_zeroCount + Past_Midtotal));
+                entrie_X.add(new Entry(0, i + Past_zeroCount + Past_Midtotal));
+                entrie_C.add(new Entry(0, i + Past_zeroCount + Past_Midtotal));
+            }
+
+
+
+
+            LineDataSet dataset = new LineDataSet(entries, "Today");
+            dataset.setColor(Color.RED);
+            LineDataSet dataset2 = new LineDataSet(entries2, "Today");
+            dataset2.setColor(Color.GREEN);
+            LineDataSet dataset3 = new LineDataSet(entries3, "Today");
+            dataset3.setColor(Color.BLUE);
+            LineDataSet dataset4 = new LineDataSet(entries4, "Today");
+            dataset4.setColor(Color.YELLOW);
+
+
+            LineDataSet dataset5 = new LineDataSet(entrie_N, "Last Week");
+            dataset5.setColor(Color.DKGRAY);
+            LineDataSet dataset6 = new LineDataSet(entrie_W, "Last Week");
+            dataset6.setColor(Color.DKGRAY);
+            LineDataSet dataset7 = new LineDataSet(entrie_X, "Last Week");
+            dataset7.setColor(Color.DKGRAY);
+            LineDataSet dataset8 = new LineDataSet(entrie_C, "Last Week");
+            dataset8.setColor(Color.DKGRAY);
+
+
+            LineData data = new LineData(labels,dataset);
+            data.addDataSet(dataset5);
+            LineData data2 = new LineData(labels,dataset2);
+            data2.addDataSet(dataset6);
+            LineData data3 = new LineData(labels,dataset3);
+            data3.addDataSet(dataset7);
+            LineData data4 = new LineData(labels,dataset4);
+            data4.addDataSet(dataset8);
+
+
+            dataset.setDrawCircles(false);
+            dataset.setDrawHorizontalHighlightIndicator(false);
+            dataset.setDrawHighlightIndicators(true);
+
+            dataset2.setDrawCircles(false);
+            dataset2.setDrawHorizontalHighlightIndicator(false);
+            dataset2.setDrawHighlightIndicators(false);
+
+            dataset3.setDrawCircles(false);
+            dataset3.setDrawHorizontalHighlightIndicator(false);
+            dataset3.setDrawHighlightIndicators(false);
+
+            dataset4.setDrawCircles(false);
+            dataset4.setDrawHorizontalHighlightIndicator(false);
+            dataset4.setDrawHighlightIndicators(false);
+
+            dataset5.setDrawCircles(false);
+            dataset5.setDrawHorizontalHighlightIndicator(false);
+            dataset5.setDrawHighlightIndicators(false);
+
+            dataset6.setDrawCircles(false);
+            dataset6.setDrawHorizontalHighlightIndicator(false);
+            dataset6.setDrawHighlightIndicators(false);
+
+            dataset7.setDrawCircles(false);
+            dataset7.setDrawHorizontalHighlightIndicator(false);
+            dataset7.setDrawHighlightIndicators(false);
+
+            dataset8.setDrawCircles(false);
+            dataset8.setDrawHorizontalHighlightIndicator(false);
+            dataset8.setDrawHighlightIndicators(false);
+
+
+
+
+
+            lineCharts.get(0).setData(data);
+            lineCharts.get(1).setData(data2);
+            lineCharts.get(2).setData(data3);
+            lineCharts.get(3).setData(data4);
+
+            data.notifyDataChanged();
+            data2.notifyDataChanged();
+            data3.notifyDataChanged();
+            data4.notifyDataChanged();
+
+            int Time = 0;
+            if(first){
+                Time = 5000;
+                first=false;
+            }
+            lineCharts.get(0).animateY(Time);
+            lineCharts.get(1).animateY(Time);
+            lineCharts.get(2).animateY(Time);
+            lineCharts.get(3).animateY(Time);
+
+
+
+
+
+
+
+        }catch(JSONException e){
+            System.out.println("Draw Error");
+
         }
 
-        inputStream.close();
-        System.out.println("I am here     yyyyyyyyyyyyyyyyy");
-        System.out.println(result);
-        return result;
+
+
     }
 
+    public void Init_Table(){
+        for(int i=0; i<1440;i++){
 
-
+            labels.add(String.valueOf(i/120 + 8));
+        }
+    }
 
 }

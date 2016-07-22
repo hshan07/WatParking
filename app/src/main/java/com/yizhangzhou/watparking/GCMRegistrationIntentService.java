@@ -1,7 +1,9 @@
 package com.yizhangzhou.watparking;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -32,6 +34,13 @@ public class GCMRegistrationIntentService extends IntentService {
             InstanceID instanceID = InstanceID.getInstance(getApplicationContext());
             token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             Log.w("GCMRegIntentService", "token:" + token);
+
+
+
+            //final LocalAdapter localAdapter = ((LocalAdapter) this.getActivity().getApplication());
+
+
+
             //notify to UI that registration complete success
             registrationComplete = new Intent(REGISTRATION_SUCCESS);
             registrationComplete.putExtra("token", token);
